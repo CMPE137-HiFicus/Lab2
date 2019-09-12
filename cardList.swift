@@ -45,16 +45,20 @@ class cardList
     
     func differentNumber(set: [Card])-> Bool {
         if set[0].cardNumber != set[1].cardNumber && set[0].cardNumber != set[2].cardNumber && set[1].cardNumber != set[2].cardNumber { return true}
+            
         else {return false}
     }
     
     func differenSymbol(set: [Card]) -> Bool {
         if set[0].cardSymbol != set[1].cardSymbol && set[0].cardSymbol != set[2].cardSymbol && set[1].cardSymbol != set[2].cardSymbol{ return true}
+            
         else {return false}
     }
     
     func isSet(set:[Card]) -> Bool {
-        if differenSymbol(set: set) && !(differentColor(set: set)) {return true}
+        if !differentNumber(set: set)  {return true}
+       else if !differentColor(set: set) && !differentShade(set: set) &&  !differentNumber(set: set ) && !differenSymbol(set: set)  {return true}
+            
         
         else { return false}
     }
