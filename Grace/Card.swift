@@ -12,9 +12,8 @@ struct Card {
     let quantity: Quantity
     let shade: Shade
     let fill: Fill
-    var unhide: Bool
-    var selected: Bool
     var isMatched: Bool
+
 }
 
 enum Shade {
