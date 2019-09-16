@@ -11,11 +11,16 @@ import UIKit
 class ViewController: UIViewController {
     
     lazy var game = SetGame()
-    
+    var shownBtns = 12
+    var selectedList = Array<Any>()
+    typealias tup1 = (buttonIndex: Int, cardAttribute: Card)
+    typealias tup2 = (buttonIndex: Int, cardAttribute: Card)
+    typealias tup3 = (buttonIndex: Int, cardAttribute: Card)
+    var cardMap:[Int?: Card] = [:]
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        updateViewFromModel()
+//        updateViewFromModel()
     }
 
     @IBOutlet var cardButtons:[UIButton]!
@@ -24,71 +29,63 @@ class ViewController: UIViewController {
     
     @IBAction func startGame(_ sender: Any) {
         start.isEnabled = false
-    }
-    
-    @IBAction func deal(_ sender: Any) {
-        if shownBtns < cardButtons.count {
-            shownBtns += 3
-        }
-    }
-    var shownBtns = 12
-    var selectedList = Array<Any>()
-    
-    
-    @IBAction func touchCards(_ sender:UIButton){
-        
-        print("\(game.deck.count)")
-        if let cardNumber = cardButtons.firstIndex(of: sender) {
-            _ = game.chooseCard(at: cardNumber)
-            updateViewFromModel()
-        } else {
-            print("Chosen Card was not in cardButton")
-        }
-        
-    }
-    
-    func updateViewFromModel(){
-        for index in 0..<cardButtons.count
+        for index in 0..<shownBtns
         {
             let button = cardButtons[index]
-            var card = game.deck[index]
+            let card = game.deck[index]
             let temp:IconSelection = IconSelection()
             temp.mixmatch(of: card, onButton: button)
-            game.deck.remove(at: index)
-            if index >= shownBtns {
-                button.isHidden = true
-                card.unhide = true
-            } else {
-                button.isHidden = false
-                card.unhide = false
-            }
-            
-            if card.selected {
-                button.layer.borderWidth = 3.0
-                button.layer.borderColor = UIColor.blue.cgColor
-                button.layer.cornerRadius = 8.0
-                if selectedList.count < 3 {
-                    button.backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-                    selectedList.append(card)
-                } else if selectedList.count == 3 {
-                    if card.isMatched {
-                        let attributes = [NSAttributedString.Key: Any]()
-                        let na = NSAttributedString(string: "", attributes: attributes)
-                        button.setAttributedTitle(na, for: UIControl.State.normal)
-                    }
-                } else {
-                    
-                }
-                
-            } else {
-                button.showsTouchWhenHighlighted = false
-            }
+            cardMap[index] = card
         }
         
     }
     
+    @IBAction func newgame(_ sender: Any) {
+        game = SetGame()
+        start.isEnabled = true
+        shownBtns = 12
+            for button in cardButtons
+            {
+                let attributes = [NSAttributedString.Key:Any]()
+                let newAttribute = NSAttributedString(string: "",attributes: attributes    ); button.setAttributedTitle( newAttribute, for: UIControl.State.normal)
+                
+        }
+    }
     
+    
+    @IBAction func deal(_ sender: Any) {
+        var index = 0
+            for button in cardButtons {
+                if (button.attributedTitle(for: UIControl.State.normal) == nil || String(describing:button.attributedTitle(for: UIControl.State.normal)) == "Optional()") && index < 3
+                {
+                if shownBtns < cardButtons.count {
+                    let button = cardButtons[shownBtns]
+                    let card = game.deck[shownBtns]
+                    let temp:IconSelection = IconSelection()
+                    temp.mixmatch(of: card, onButton: button)
+                    shownBtns += 1
+                    index += 1
+                    let num = cardButtons.firstIndex(of: button)
+                    cardMap[num] = card
+                    }
+                    
+                }
+        }
+        }
+    
+    @IBAction func touchCards(_ sender:UIButton){
+    
+        let cardNumber = cardButtons.firstIndex(of: sender)
+            for index in 0..<3 {
+                let card = cardMap[cardNumber]
+                print(card?.pattern)
+            }
+//        print(game.isSet(card1: selectedList[0] , card2: selectedList[1] , card3: selectedList[2]))
+    }
+
 }
+
+
 
 extension Int {
     var arc4random: Int {
